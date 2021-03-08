@@ -10,7 +10,7 @@ terraform {
   required_providers { # aka plugins
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.21.0"
+      version = "~> 3.22.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
