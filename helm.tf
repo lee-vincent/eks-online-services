@@ -95,7 +95,7 @@ resource "helm_release" "cluster-autoscaler" {
     value = "false"
   }
 
-    set {
+  set {
     name  = "rbac.serviceAccount.name"
     value = "cluster-autoscaler"
   }
@@ -107,24 +107,24 @@ resource "helm_release" "cluster-autoscaler" {
 
 }
 
-resource "null_resource" "wait_for_appmesh_crds" {
-  triggers = {
-    timestamp        = timestamp()
-  }
+# resource "null_resource" "wait_for_appmesh_crds" {
+#   triggers = {
+#     timestamp        = timestamp()
+#   }
 
 
-depends_on = [
-  helm_release.appmesh-controller,
-  helm_release.cluster-autoscaler,
-]
+#   depends_on = [
+#     helm_release.appmesh-controller,
+#     helm_release.cluster-autoscaler,
+#   ]
  
 
-  provisioner "local-exec" {
-    command = ".\\wait-crds.ps1 ${module.eks.kubeconfig_filename}"
-    interpreter = ["PowerShell", "-Command"]
+#   provisioner "local-exec" {
+#     command = ".\\wait-crds.ps1 ${module.eks.kubeconfig_filename}"
+#     interpreter = ["PowerShell", "-Command"]
 
-  }
-}
+#   }
+# }
 
 # now it's safe to apply k8s manifest.yaml's with appmesh resource definitions
 # from the aws-app-mesh howto's

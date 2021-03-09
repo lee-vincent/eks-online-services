@@ -10,7 +10,7 @@ locals {
 
 resource "local_file" "manifest" {
   content              = local.manifest
-  filename             = ".\\manifest.yaml"
+  filename             = "./manifest.yaml"
   file_permission      = "0644"
   directory_permission = "0755"
 }
@@ -22,14 +22,11 @@ resource "random_string" "suffix" {
 
 
 module "eks" {
-  source    = "terraform-aws-modules/eks/aws"
-  cluster_name    = local.cluster_name
-  config_output_path = ".\\kubeconfig_${local.cluster_name}"
-#  wait_for_cluster_cmd = "for i in `seq 1 60`; do if `command -v wget > /dev/null`; then wget --no-check-certificate -O - -q ${module.eks.aws_eks_cluster.this[0].endpoint}/healthz >/dev/null && exit 0 || true; else curl -k -s ${module.eks.aws_eks_cluster.this[0].endpoint}/healthz >/dev/null && exit 0 || true;fi; sleep 5; done; echo TIMEOUT && exit 1"
-  # wait_for_cluster_interpreter = ["powershell.exe", "wsl /bin/bash -c 'ping google.com'"] wsl /bin/bash -c 'ping google.com'
-  wait_for_cluster_interpreter = ["bash", "-c"]
-  cluster_version = "1.18"
-  subnets         = module.vpc.private_subnets
+  source                        = "terraform-aws-modules/eks/aws"
+  cluster_name                  = local.cluster_name
+  wait_for_cluster_interpreter  = ["/bin/bash", "-c"]
+  cluster_version               = "1.18"
+  subnets                       = module.vpc.private_subnets
   # cluster_service_ipv4_cidr = "192.168.0.0/16"
 
   enable_irsa     = true
@@ -79,3 +76,4 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 data "aws_caller_identity" "current" {}
+data "aws_partition" "current" {}
