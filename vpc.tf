@@ -36,8 +36,8 @@ module "vpc" {
   }
 }
 
-resource "aws_service_discovery_private_dns_namespace" "app_namespace_aws" {
-  name        = "online-services.local"
-  description = "private dns namespace for online-services.local"
-  vpc         = module.vpc.vpc_id
-}
+# resource "aws_service_discovery_private_dns_namespace" "app_namespace_aws" {
+#   name        = "online-services.local"
+#   description = "private dns namespace for online-services.local"
+#   vpc         = module.vpc.vpc_id
+# }

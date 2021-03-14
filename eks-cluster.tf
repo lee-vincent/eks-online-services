@@ -1,4 +1,16 @@
+
+
+
+
+
+data "aws_eks_cluster" "cluster" {  name = module.eks.cluster_id }
+data "aws_eks_cluster_auth" "cluster" {  name = module.eks.cluster_id }
+data "aws_caller_identity" "current" {}
+data "aws_partition" "current" {}
+
+
 locals {
+
   cluster_name = "eks-online-services-${random_string.suffix.result}"
 
   manifest = templatefile("${path.module}/manifest.tpl", {
@@ -7,6 +19,8 @@ locals {
     ENVOY_IMAGE     = "840364872350.dkr.ecr.${var.region}.amazonaws.com/aws-appmesh-envoy:v1.15.1.0-prod"
   })
 }
+
+
 
 resource "local_file" "manifest" {
   content              = local.manifest
@@ -31,23 +45,20 @@ module "eks" {
 
   enable_irsa     = true
   tags = {
-    Environment = "training"
-    GithubRepo  = "terraform-aws-eks"
-    GithubOrg   = "terraform-aws-modules"
+    environment = var.environment
   }
 
   vpc_id = module.vpc.vpc_id
 
-  worker_groups = [
+  worker_groups_launch_template = [ 
     {
-
       name                          = "wg1"
       instance_type                 = "t2.small"
-      additional_userdata           = "customer user data"
-      asg_desired_capacity          = 2
+      asg_desired_capacity          = 3
       asg_max_size                  = 5
       asg_min_size                  = 1
       additional_security_group_ids = [aws_security_group.security_group_wg1.id]
+      key_name                      = aws_key_pair.bastion_key.key_name
       tags = [
         {
           "key"                 = "k8s.io/cluster-autoscaler/enabled"
@@ -60,20 +71,9 @@ module "eks" {
           "value"               = "true"
         }
       ]
-    },
+    }
   ]
-
+  
   worker_additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
 
 }
-
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_caller_identity" "current" {}
-data "aws_partition" "current" {}

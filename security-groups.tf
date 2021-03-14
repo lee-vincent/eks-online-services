@@ -13,8 +13,10 @@ resource "aws_security_group" "security_group_wg1" {
     cidr_blocks = [
       "10.0.0.0/8",
     ]
+    security_groups = [aws_security_group.bastion_dmz.id]
   }
 }
+
 
 
 resource "aws_security_group" "all_worker_mgmt" {

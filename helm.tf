@@ -7,68 +7,67 @@ provider "helm" {
 }
 
 # need to do a helm repo add eks https://aws.github.io/eks-charts before this happens
-resource "helm_release" "appmesh-controller" {
-  name       = "appmesh-controller"
-  namespace  = kubernetes_namespace.appmesh-system.metadata.0.name
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "appmesh-controller"
+# resource "helm_release" "appmesh-controller" {
+#   name       = "appmesh-controller"
+#   namespace  = kubernetes_namespace.appmesh-system.metadata.0.name
+#   repository = "https://aws.github.io/eks-charts"
+#   chart      = "appmesh-controller"
 
-  set {
-    name  = "region"
-    value = var.region
-  }
+#   set {
+#     name  = "region"
+#     value = var.region
+#   }
 
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
+#   set {
+#     name  = "serviceAccount.create"
+#     value = "true"
+#   }
 
-  set {
-    name  = "serviceAccount.name"
-    value = "appmesh-controller"
-  }
+#   set {
+#     name  = "serviceAccount.name"
+#     value = "appmesh-controller"
+#   }
 
-    set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/appmesh-controller"
-  }
-}
+#     set {
+#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/appmesh-controller"
+#   }
+# }
 
-// this is needed to provision aws nlb's from k8s
-resource "helm_release" "aws-load-balancer-controller" {
-  name       = "aws-load-balancer-controller"
-  namespace  = "kube-system"
-  repository = "https://aws.github.io/eks-charts"
-  chart      = "aws-load-balancer-controller"
+# // this is needed to provision aws nlb's from k8s
+# resource "helm_release" "aws-load-balancer-controller" {
+#   name       = "aws-load-balancer-controller"
+#   namespace  = "kube-system"
+#   repository = "https://aws.github.io/eks-charts"
+#   chart      = "aws-load-balancer-controller"
 
-  set {
-    name  = "region"
-    value = var.region
-  }
+#   set {
+#     name  = "region"
+#     value = var.region
+#   }
 
-  set {
-    name  = "serviceAccount.create"
-    value = "true"
-  }
+#   set {
+#     name  = "serviceAccount.create"
+#     value = "true"
+#   }
 
-  set {
-    name  = "serviceAccount.name"
-    value = "aws-load-balancer-controller"
-  }
+#   set {
+#     name  = "serviceAccount.name"
+#     value = "aws-load-balancer-controller"
+#   }
 
-    set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-load-balancer-controller"
-  }
-}
+#     set {
+#     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+#     value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-load-balancer-controller"
+#   }
+# }
 
-#helm repo add autoscaler https://kubernetes.github.io/autoscaler
 resource "helm_release" "cluster-autoscaler" {
-  name       = "autoscaler"
+  name       = "ca-release"
   namespace  = "kube-system"
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
-  version = "9.3.0"
+  version = "9.7.0"
 
   set {
     name  = "autoDiscovery.clusterName"
@@ -86,6 +85,16 @@ resource "helm_release" "cluster-autoscaler" {
   }
 
   set {
+    name  = "rbac.serviceAccount.name"
+    value = "cluster-autoscaler"
+  }
+
+  set {
+    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/cluster-autoscaler-controller"
+  }
+
+  set {
     name = "extraArgs.balance-similar-node-groups"
     value = "true"
   }
@@ -95,15 +104,7 @@ resource "helm_release" "cluster-autoscaler" {
     value = "false"
   }
 
-  set {
-    name  = "rbac.serviceAccount.name"
-    value = "cluster-autoscaler"
-  }
 
-  set {
-    name  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/cluster-autoscaler"
-  }
 
 }
 
