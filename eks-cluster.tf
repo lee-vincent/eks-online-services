@@ -25,21 +25,21 @@ locals {
 
   cluster_name = "eks-online-services-${random_string.suffix.result}"
 
-  manifest = templatefile("${path.module}/manifest.tpl", {
-    APP_NAMESPACE   = "online-services"
-    MESH_NAME       = "online-services"
-    ENVOY_IMAGE     = "840364872350.dkr.ecr.${var.region}.amazonaws.com/aws-appmesh-envoy:v1.15.1.0-prod"
-  })
+  # manifest = templatefile("${path.module}/manifest.tpl", {
+  #   APP_NAMESPACE   = "online-services"
+  #   MESH_NAME       = "online-services"
+  #   ENVOY_IMAGE     = "840364872350.dkr.ecr.${var.region}.amazonaws.com/aws-appmesh-envoy:v1.15.1.0-prod"
+  # })
 }
 
 
 
-resource "local_file" "manifest" {
-  content              = local.manifest
-  filename             = "./manifest.yaml"
-  file_permission      = "0644"
-  directory_permission = "0755"
-}
+# resource "local_file" "manifest" {
+#   content              = local.manifest
+#   filename             = "./manifest.yaml"
+#   file_permission      = "0644"
+#   directory_permission = "0755"
+# }
 
 resource "random_string" "suffix" {
   length  = 4
@@ -69,7 +69,8 @@ module "eks" {
       asg_desired_capacity          = 3
       asg_max_size                  = 5
       asg_min_size                  = 1
-      additional_security_group_ids = [aws_security_group.security_group_wg1.id]
+      # add additional sgs at the launch template level
+      # additional_security_group_ids = [aws_security_group.security_group_wg1.id]
       key_name                      = aws_key_pair.bastion_key.key_name
       tags = [
         {
@@ -85,7 +86,7 @@ module "eks" {
       ]
     }
   ]
-  
-  worker_additional_security_group_ids = [aws_security_group.all_worker_mgmt.id]
+  # sgs applied to all workers (i.e. worker nodes created from launch template and launch config)
+  worker_additional_security_group_ids = [aws_security_group.security_group_wg1.id]
 
 }
