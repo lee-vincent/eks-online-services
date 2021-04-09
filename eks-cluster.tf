@@ -3,8 +3,8 @@
 
 
 
-data "aws_eks_cluster" "cluster" {  name = module.eks.cluster_id }
-data "aws_eks_cluster_auth" "cluster" {  name = module.eks.cluster_id }
+data "aws_eks_cluster" "cluster" { name = module.eks.cluster_id }
+data "aws_eks_cluster_auth" "cluster" { name = module.eks.cluster_id }
 data "aws_caller_identity" "current" {}
 data "aws_partition" "current" {}
 
@@ -48,30 +48,37 @@ resource "random_string" "suffix" {
 
 
 module "eks" {
-  source                        = "terraform-aws-modules/eks/aws"
-  cluster_name                  = local.cluster_name
-  wait_for_cluster_interpreter  = ["/bin/bash", "-c"]
-  cluster_version               = "1.18"
-  subnets                       = module.vpc.private_subnets
+  source                       = "terraform-aws-modules/eks/aws"
+  cluster_name                 = local.cluster_name
+  wait_for_cluster_interpreter = ["/bin/bash", "-c"]
+  cluster_version              = "1.18"
+  subnets                      = module.vpc.private_subnets
   # cluster_service_ipv4_cidr = "192.168.0.0/16"
-
-  enable_irsa     = true
+  # cluster_enabled_log_types = ["api","audit","authenticator","controllerManager","scheduler"]
+  map_users = [
+    {
+      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/Administrator"
+      username = "AWSAdministrator"
+      groups   = ["system:masters"]
+    },
+  ]
+  enable_irsa = true
   tags = {
     environment = var.environment
   }
 
   vpc_id = module.vpc.vpc_id
 
-  worker_groups_launch_template = [ 
+  worker_groups_launch_template = [
     {
-      name                          = "wg1"
-      instance_type                 = "t2.small"
-      asg_desired_capacity          = 3
-      asg_max_size                  = 5
-      asg_min_size                  = 1
+      name                 = "wg1"
+      instance_type        = "t2.small"
+      asg_desired_capacity = 3
+      asg_max_size         = 5
+      asg_min_size         = 1
       # add additional sgs at the launch template level
       # additional_security_group_ids = [aws_security_group.security_group_wg1.id]
-      key_name                      = aws_key_pair.bastion_key.key_name
+      key_name = aws_key_pair.bastion_key.key_name
       tags = [
         {
           "key"                 = "k8s.io/cluster-autoscaler/enabled"
@@ -87,6 +94,6 @@ module "eks" {
     }
   ]
   # sgs applied to all workers (i.e. worker nodes created from launch template and launch config)
-  worker_additional_security_group_ids = [aws_security_group.security_group_wg1.id]
+  worker_additional_security_group_ids = [aws_security_group.wg1_ingress_bastion.id]
 
 }

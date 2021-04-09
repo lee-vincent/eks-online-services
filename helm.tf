@@ -68,7 +68,7 @@ resource "helm_release" "cluster-autoscaler" {
   namespace  = "kube-system"
   repository = "https://kubernetes.github.io/autoscaler"
   chart      = "cluster-autoscaler"
-  version = "9.7.0"
+  version    = "9.7.0"
 
   set {
     name  = "autoDiscovery.clusterName"
@@ -96,12 +96,12 @@ resource "helm_release" "cluster-autoscaler" {
   }
 
   set {
-    name = "extraArgs.balance-similar-node-groups"
+    name  = "extraArgs.balance-similar-node-groups"
     value = "true"
   }
 
   set {
-    name = "extraArgs.skip-nodes-with-system-pods"
+    name  = "extraArgs.skip-nodes-with-system-pods"
     value = "false"
   }
 
@@ -119,7 +119,7 @@ resource "helm_release" "cluster-autoscaler" {
 #     helm_release.appmesh-controller,
 #     helm_release.cluster-autoscaler,
 #   ]
- 
+
 
 #   provisioner "local-exec" {
 #     command = ".\\wait-crds.ps1 ${module.eks.kubeconfig_filename}"

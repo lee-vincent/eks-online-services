@@ -1,5 +1,5 @@
 variable "region" {
-  default     = "us-east-1"
+  default = "us-east-1"
 }
 
 variable "k8s_cluster_name" {}
@@ -11,13 +11,14 @@ variable "app_mesh_manifest_version" {
 }
 
 variable "workstation_cidr" {
-  type = string
+  type        = string
   description = "The ip of the workstation machine"
-  sensitive = true
+  sensitive   = true
 }
 
 variable "bastion_key" {
-  type = string
+  type        = string
   description = "The public key used to ssh to the bastion host"
-  sensitive = true
+  sensitive   = true
 }
+

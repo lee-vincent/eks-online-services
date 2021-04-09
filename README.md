@@ -1,8 +1,5 @@
 # Learn Terraform - Provision an EKS Cluster
 
-This repo is a companion repo to the [Provision an EKS Cluster learn guide](https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster), containing
-Terraform configuration files to provision an EKS cluster on AWS.
-
 After installing the AWS CLI. Configure it to use your credentials.
 
 ```shell
@@ -13,51 +10,10 @@ Default region name [None]: <YOUR_AWS_REGION>
 Default output format [None]: json
 ```
 
-This enables Terraform access to the configuration file and performs operations on your behalf with these security credentials.
 
-After you've done this, initalize your Terraform workspace, which will download 
-the provider and initialize it with the values provided in the `terraform.tfvars` file.
-
-```shell
-$ terraform init
-Initializing modules...
-Downloading terraform-aws-modules/eks/aws 9.0.0 for eks...
-- eks in .terraform/modules/eks/terraform-aws-modules-terraform-aws-eks-908c656
-- eks.node_groups in .terraform/modules/eks/terraform-aws-modules-terraform-aws-eks-908c656/modules/node_groups
-Downloading terraform-aws-modules/vpc/aws 2.6.0 for vpc...
-- vpc in .terraform/modules/vpc/terraform-aws-modules-terraform-aws-vpc-4b28d3d
-
-Initializing the backend...
-
-Initializing provider plugins...
-- Checking for available provider plugins...
-- Downloading plugin for provider "template" (hashicorp/template) 2.1.2...
-- Downloading plugin for provider "kubernetes" (hashicorp/kubernetes) 1.10.0...
-- Downloading plugin for provider "aws" (hashicorp/aws) 2.52.0...
-- Downloading plugin for provider "random" (hashicorp/random) 2.2.1...
-- Downloading plugin for provider "local" (hashicorp/local) 1.4.0...
-- Downloading plugin for provider "null" (hashicorp/null) 2.1.2...
-
-Terraform has been successfully initialized!
 ```
 
-Then, provision your EKS cluster by running `terraform apply`. This will 
-take approximately 10 minutes.
-
-```shell
-$ terraform apply
-
-# Output truncated...
-
-Plan: 51 to add, 0 to change, 0 to destroy.
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-# Output truncated...
-
-Apply complete! Resources: 51 added, 0 changed, 0 destroyed.
+T
 
 Outputs:
 
