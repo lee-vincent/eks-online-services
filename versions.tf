@@ -1,16 +1,8 @@
-# EKS documentation
-# Kubernetes version      1.18
-# Amazon VPC CNI plug-in  1.7.5
-# DNS (CoreDNS)           1.7.0
-# KubeProxy               1.18.9
-
-
-
 terraform {
   required_providers { # aka plugins
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.22.0"
+      version = "~> 3.36.0"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
@@ -39,9 +31,6 @@ terraform {
     external = {
       version = "2.0.0"
     }
+    # provider "http" {}
   }
-}
-
-terraform {
-  required_version = ">= 0.12"
 }

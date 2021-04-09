@@ -6,6 +6,14 @@ resource "aws_security_group" "wg1_ingress_bastion" {
   vpc_id      = module.vpc.vpc_id
 }
 
+# data "http" "workstation-external-ip" {
+#   url = "http://ipv4.icanhazip.com"
+# }
+
+# # Override with variable or hardcoded value if necessary
+# locals {
+#   workstation-external-cidr = "${chomp(data.http.workstation-external-ip.body)}/32"
+
 
 
 resource "aws_security_group_rule" "wg1_ingress_bastion" {
