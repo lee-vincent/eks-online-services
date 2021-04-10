@@ -61,6 +61,7 @@ $ kubectl get deployment metrics-server -n kube-system
 NAME             READY   UP-TO-DATE   AVAILABLE   AGE
 metrics-server   1/1     1            1           4s
 ```
+test
 
 ### Deploy Kubernetes Dashboard
 
