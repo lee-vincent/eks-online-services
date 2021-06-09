@@ -31,3 +31,6 @@ override.tf.json
 
 # intermediate debug output
 *.ig
+
+# intermediate debug output
+*.log

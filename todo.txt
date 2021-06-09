@@ -1,0 +1,2 @@
+-fix duplicate bastion key
+-use SSM for official AWS linux amis
