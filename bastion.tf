@@ -10,11 +10,6 @@ resource "aws_security_group" "wg1_ingress_bastion" {
 #   url = "http://ipv4.icanhazip.com"
 # }
 
-# # Override with variable or hardcoded value if necessary
-# locals {
-#   workstation-external-cidr = "${chomp(data.http.workstation-external-ip.body)}/32"
-
-
 
 resource "aws_security_group_rule" "wg1_ingress_bastion" {
   description              = "allow bastion to access worker group 1 in private subnet."
@@ -62,6 +57,13 @@ resource "aws_instance" "bastion_instance" {
   tags = {
     bastion = "true"
   }
+}
+
+# Get Amazon Linux AMI ID using SSM Parameter endpoint in us-east-1
+
+data "aws_ssm_parameter" "amazon_linux_2_ami_us_east_1" {
+  provider = aws.region-master
+  name     = "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 }
 
 data "aws_ami" "amazon_linux_2" {
